@@ -1,15 +1,13 @@
 #!/bin/bash
 
-# Create the dist directory if it doesn't exist
-mkdir -p dist/utils
-mkdir -p public/js
+# Make sure the dist directory exists
+mkdir -p dist
 
-# Compile TypeScript files
-echo "Compiling TypeScript files..."
-npx tsc --project tsconfig.json
+# Generate the standalone HTML file
+echo "Generating standalone HTML file..."
+node generate-standalone.js
 
-# Copy the main.js file to the public/js directory
-echo "Copying main.js to public/js directory..."
-cp dist/main.js public/js/
-
+# Print completion message
 echo "Build completed successfully!"
+echo "To run the server: npm start"
+echo "To access standalone file: dist/password-generator-standalone.html"

@@ -13,10 +13,14 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Node Password Generator"
+args = "Password Generator Server"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Build Standalone"
 
 [[workflows.workflow]]
-name = "Node Password Generator"
+name = "Password Generator Server"
 author = "agent"
 
 [workflows.workflow.metadata]
@@ -29,6 +33,20 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "ts-node src/server.ts"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Build Standalone"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./build.sh"
 
 [deployment]
 run = ["sh", "-c", "npm install && npm run dev"]

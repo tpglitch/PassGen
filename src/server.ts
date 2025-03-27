@@ -21,8 +21,8 @@ const MIME_TYPES: Record<string, string> = {
 const server = http.createServer((req: http.IncomingMessage, res: http.ServerResponse) => {
   console.log(`Request for ${req.url}`);
   
-  // Default to index.html if the URL is '/'
-  let filePath: string = req.url === '/' ? '/index.html' : req.url || '/';
+  // Default to password-generator.html if the URL is '/'
+  let filePath: string = req.url === '/' ? '/password-generator.html' : req.url || '/';
   
   // Serve files from the 'public' directory
   filePath = path.join('public', filePath);
