@@ -77,10 +77,17 @@
     const strengthMeterFill = document.querySelector('.strength-meter-fill');
     const strengthText = document.querySelector('.strength-text');
     
-    // Update length value when slider changes
+    // Update length value when slider changes and generate new password
     lengthSlider.addEventListener('input', () => {
       lengthValue.textContent = lengthSlider.value;
+      generatePassword();
     });
+    
+    // Add event listeners to all checkboxes to generate new password when changed
+    uppercaseCheckbox.addEventListener('change', generatePassword);
+    lowercaseCheckbox.addEventListener('change', generatePassword);
+    numbersCheckbox.addEventListener('change', generatePassword);
+    specialCheckbox.addEventListener('change', generatePassword);
     
     // Generate password when button is clicked
     generateBtn.addEventListener('click', generatePassword);
