@@ -27,8 +27,8 @@
         <div class="option">
           <label for="length">Length</label>
           <div class="length-control">
-            <input type="range" id="length" min="4" max="32" value="12">
-            <input type="number" id="length-input" min="4" max="32" value="12">
+            <input type="range" id="length" min="4" max="64" value="12">
+            <input type="number" id="length-input" min="4" max="64" value="12">
           </div>
         </div>
         
@@ -88,7 +88,7 @@
       // Ensure the input value is within min and max bounds
       const value = parseInt(lengthInput.value);
       if (value < 4) lengthInput.value = 4;
-      if (value > 32) lengthInput.value = 32;
+      if (value > 64) lengthInput.value = 64;
       
       lengthSlider.value = lengthInput.value;
       generatePassword();
@@ -154,8 +154,8 @@
       let score = 0;
       const length = password.length;
       
-      // Length score (up to 40 points)
-      score += Math.min(length * 2, 40);
+      // Length score (up to 50 points)
+      score += Math.min(length, 50);
       
       // Character variety score (up to 60 points)
       const typesCount = [hasUppercase, hasLowercase, hasNumbers, hasSpecial].filter(Boolean).length;
