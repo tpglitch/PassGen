@@ -28,7 +28,7 @@
           <label for="length">Length</label>
           <div class="length-control">
             <input type="range" id="length" min="4" max="32" value="12">
-            <span id="length-value">12</span>
+            <input type="number" id="length-input" min="4" max="32" value="12">
           </div>
         </div>
         
@@ -68,7 +68,7 @@
     const passwordDisplay = document.getElementById('password');
     const copyBtn = document.getElementById('copy-btn');
     const lengthSlider = document.getElementById('length');
-    const lengthValue = document.getElementById('length-value');
+    const lengthInput = document.getElementById('length-input');
     const uppercaseCheckbox = document.getElementById('uppercase');
     const lowercaseCheckbox = document.getElementById('lowercase');
     const numbersCheckbox = document.getElementById('numbers');
@@ -77,9 +77,20 @@
     const strengthMeterFill = document.querySelector('.strength-meter-fill');
     const strengthText = document.querySelector('.strength-text');
     
-    // Update length value when slider changes and generate new password
+    // Update number input when slider changes and generate new password
     lengthSlider.addEventListener('input', () => {
-      lengthValue.textContent = lengthSlider.value;
+      lengthInput.value = lengthSlider.value;
+      generatePassword();
+    });
+    
+    // Update slider when number input changes and generate new password
+    lengthInput.addEventListener('input', () => {
+      // Ensure the input value is within min and max bounds
+      const value = parseInt(lengthInput.value);
+      if (value < 4) lengthInput.value = 4;
+      if (value > 32) lengthInput.value = 32;
+      
+      lengthSlider.value = lengthInput.value;
       generatePassword();
     });
     
