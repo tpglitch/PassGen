@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Generator</title>
+  <link rel="stylesheet" href="global.css">
+</head>
+<body>
+  <div id="app">
+    <div class="container">
+      <h1>Password Generator</h1>
+      
+      <div class="password-display">
+        <input type="text" id="password" readonly value="P4$5w0rd!">
+        <button id="copy-btn">Copy</button>
+      </div>
+      
+      <div class="strength-indicator">
+        <div class="strength-meter">
+          <div class="strength-meter-fill" style="width: 75%; background-color: #4CAF50;"></div>
+        </div>
+        <span class="strength-text">Strong</span>
+      </div>
+      
+      <div class="options">
+        <div class="option">
+          <label for="length">Length</label>
+          <div class="length-control">
+            <input type="range" id="length" min="4" max="32" value="12">
+            <span id="length-value">12</span>
+          </div>
+        </div>
+        
+        <div class="option">
+          <label for="uppercase">Include Uppercase</label>
+          <input type="checkbox" id="uppercase" checked>
+        </div>
+        
+        <div class="option">
+          <label for="lowercase">Include Lowercase</label>
+          <input type="checkbox" id="lowercase" checked>
+        </div>
+        
+        <div class="option">
+          <label for="numbers">Include Numbers</label>
+          <input type="checkbox" id="numbers" checked>
+        </div>
+        
+        <div class="option">
+          <label for="special">Include Special Characters</label>
+          <input type="checkbox" id="special" checked>
+        </div>
+      </div>
+      
+      <button id="generate-btn" class="generate-btn">Generate Password</button>
+    </div>
+  </div>
+  
+  <script>
+    // Password character sets
+    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+    const numberChars = '0123456789';
+    const specialChars = '!@#$%^&*()_+~`|}{[]:;?><,./-=';
+    
+    // DOM elements
+    const passwordDisplay = document.getElementById('password');
+    const copyBtn = document.getElementById('copy-btn');
+    const lengthSlider = document.getElementById('length');
+    const lengthValue = document.getElementById('length-value');
+    const uppercaseCheckbox = document.getElementById('uppercase');
+    const lowercaseCheckbox = document.getElementById('lowercase');
+    const numbersCheckbox = document.getElementById('numbers');
+    const specialCheckbox = document.getElementById('special');
+    const generateBtn = document.getElementById('generate-btn');
+    const strengthMeterFill = document.querySelector('.strength-meter-fill');
+    const strengthText = document.querySelector('.strength-text');
+    
+    // Update length value when slider changes
+    lengthSlider.addEventListener('input', () => {
+      lengthValue.textContent = lengthSlider.value;
+    });
+    
+    // Generate password when button is clicked
+    generateBtn.addEventListener('click', generatePassword);
+    
+    // Copy password to clipboard when copy button is clicked
+    copyBtn.addEventListener('click', () => {
+      passwordDisplay.select();
+      document.execCommand('copy');
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = 'Copy';
+      }, 2000);
+    });
+    
+    // Generate a random password
+    function generatePassword() {
+      const length = lengthSlider.value;
+      const hasUppercase = uppercaseCheckbox.checked;
+      const hasLowercase = lowercaseCheckbox.checked;
+      const hasNumbers = numbersCheckbox.checked;
+      const hasSpecial = specialCheckbox.checked;
+      
+      // Ensure at least one character type is selected
+      if (!hasUppercase && !hasLowercase && !hasNumbers && !hasSpecial) {
+        alert('Please select at least one character type');
+        return;
+      }
+      
+      // Build character pool based on selected options
+      let charPool = '';
+      if (hasUppercase) charPool += uppercaseChars;
+      if (hasLowercase) charPool += lowercaseChars;
+      if (hasNumbers) charPool += numberChars;
+      if (hasSpecial) charPool += specialChars;
+      
+      // Generate random password
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charPool.length);
+        password += charPool[randomIndex];
+      }
+      
+      // Update password display
+      passwordDisplay.value = password;
+      
+      // Calculate and update password strength
+      updatePasswordStrength(password, hasUppercase, hasLowercase, hasNumbers, hasSpecial);
+    }
+    
+    // Calculate and update password strength
+    function updatePasswordStrength(password, hasUppercase, hasLowercase, hasNumbers, hasSpecial) {
+      // Calculate strength score (0-100)
+      let score = 0;
+      const length = password.length;
+      
+      // Length score (up to 40 points)
+      score += Math.min(length * 2, 40);
+      
+      // Character variety score (up to 60 points)
+      const typesCount = [hasUppercase, hasLowercase, hasNumbers, hasSpecial].filter(Boolean).length;
+      score += typesCount * 15;
+      
+      // Adjust based on actual password content
+      const hasUppercaseActual = /[A-Z]/.test(password);
+      const hasLowercaseActual = /[a-z]/.test(password);
+      const hasNumbersActual = /\d/.test(password);
+      const hasSpecialActual = /[^A-Za-z0-9]/.test(password);
+      
+      const actualTypesCount = [hasUppercaseActual, hasLowercaseActual, hasNumbersActual, hasSpecialActual].filter(Boolean).length;
+      
+      // Ensure the password actually contains the character types that were selected
+      if (actualTypesCount < typesCount) {
+        score = Math.max(score - 20, 0);
+      }
+      
+      // Update the strength indicator
+      strengthMeterFill.style.width = `${score}%`;
+      
+      // Set color based on score
+      if (score < 30) {
+        strengthMeterFill.style.backgroundColor = '#f44336'; // Red
+        strengthText.textContent = 'Weak';
+      } else if (score < 60) {
+        strengthMeterFill.style.backgroundColor = '#ff9800'; // Orange
+        strengthText.textContent = 'Moderate';
+      } else if (score < 80) {
+        strengthMeterFill.style.backgroundColor = '#2196F3'; // Blue
+        strengthText.textContent = 'Strong';
+      } else {
+        strengthMeterFill.style.backgroundColor = '#4CAF50'; // Green
+        strengthText.textContent = 'Very Strong';
+      }
+    }
+    
+    // Generate a password on page load
+    generatePassword();
+  </script>
+</body>
+</html>
